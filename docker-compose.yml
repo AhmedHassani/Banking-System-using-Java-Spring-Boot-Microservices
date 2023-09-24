@@ -1,0 +1,82 @@
+version: '3.5'
+services:
+  discovery:
+    image: ahd/discovery-service
+    container_name: discovery-service
+    build:
+      context: ./discovery-service
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+
+  gateway:
+    image: ahd/gateway-service
+    container_name: service-gateway
+    build:
+      context: ./gateway-service
+      dockerfile: Dockerfile
+    ports:
+      - "8765:8765"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
+    links:
+      - discovery
+
+  zipkin-service:
+    image: ahd/zipkin-service
+    container_name: zipkin-service
+    build:
+      context: ./zipkin-service
+      dockerfile: Dockerfile
+    ports:
+      - "9411:9411"
+
+  banking-service:
+    image: ahd/core-banking-service
+    container_name: account-service
+    build:
+      context: ./banking-service
+      dockerfile: Dockerfile
+    ports:
+      - "2222:2222"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
+    links:
+      - discovery
+
+  banking-fund-transfer-service:
+    image: ahd/banking-fund-transfer-service
+    container_name: customer-service
+    build:
+      context: ./transfer-service
+      dockerfile: Dockerfile
+    ports:
+      - "3333:3333"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
+    links:
+      - discovery
+  banking-user-service:
+    image: ahd/banking-user-service
+    container_name: banking-user-service
+    build:
+      context: ./banking-user-service
+      dockerfile: Dockerfile
+    ports:
+      - "3335:3335"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
+    links:
+      - discovery
+  banking-utility-payment-service:
+    image: ahd/banking-utility-payment-service
+    container_name: banking-utility-payment-service
+    build:
+      context: ./banking-utility-payment-service
+      dockerfile: Dockerfile
+    ports:
+      - "3335:3335"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery:8761/eureka
+    links:
+      - discovery
